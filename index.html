@@ -1357,10 +1357,11 @@ function rightColumn(w) {
   const F = 55;
   box(w, x0, DT + G / 2, 0, fw, NB + T / 2 + F / 2 - (DT + G / 2), KT, mFrame);
   // niş çerçevesi
-  box(w, x0, NB + T / 2 + F / 2, 0, F, H - (NB + T / 2 + F / 2), KT, mFrame);
-  box(w, W - F, NB + T / 2 + F / 2, 0, F, H - (NB + T / 2 + F / 2), KT, mFrame);
-  box(w, x0 + F, H - F, 0, fw - 2 * F, F, KT, mFrame);
-  box(w, x0 + F, NMID + T / 2 - F / 2, 0, fw - 2 * F, F, KT, mFrame);
+  const SF = 90;                                                                     // yan dikmeler daha kalın
+  box(w, x0, NB + T / 2 + F / 2, 0, SF, H - (NB + T / 2 + F / 2), KT, mFrame);
+  box(w, W - SF, NB + T / 2 + F / 2, 0, SF, H - (NB + T / 2 + F / 2), KT, mFrame);
+  box(w, x0 + SF, H - F, 0, fw - 2 * SF, F, KT, mFrame);
+  box(w, x0 + SF, NMID + T / 2 - F / 2, 0, fw - 2 * SF, F, KT, mFrame);
   // alt kapak: tablanın altından bazaya, duvar tarafından menteşeli
   lowDoorArgs = { x: W - G / 2, w: fw - G, h: DT - B - G };
   // niş süsleri
