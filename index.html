@@ -80,10 +80,10 @@
     <b>Kapaklar</b> 6 tek göbekli menteşeli kapak · çerçeve kumtaşı<br>
     <b>1. ve 3. bölme</b> üst raf, askı, 4 iç çekmece<br>
     <b>2. bölme</b> 7 raf<br>
-    <b>Sağ 46 cm</b> kapaksız, derinliği 29 + 29 bölünmüş: önde 3 çerçeveli açık niş, arkadaki raflara 3. bölmenin içinden ulaşılır<br>
-    <b>Makyaj masası</b> 100 × 46 × 80 cm, gardıroba dik; 4 çekmece uzun yüzde, en üstte kare bölmeli aksesuar çekmecesi
+    <b>Sağ 46 cm</b> kapaksız, derinlik 20 + 36,2 bölünmüş: önde üstte 2 çerçeveli niş ve açık raflar, arkadaki raflara 3. bölmenin içinden ulaşılır<br>
+    <b>Makyaj tablası</b> 70 × 40 × 16 cm, sağ duvara dayalı, gardıroba dik; tek çekmece kare bölmeli. Ayna sağ duvarda
   </div>
-  <div class="note">Krokiye göre hazırlandı. Baza 10 cm, masa yüksekliği 80 cm, çekmece sayısı ve kulp tipi tahminidir. Renkler numuneye göre değişir.</div>
+  <div class="note">Krokiye göre hazırlandı. Baza 10 cm, tabla yüksekliği 80 cm, ayna ölçüsü, öndeki alt raflar ve kulp tipi tahminidir. Renkler numuneye göre değişir.</div>
 </div>
 <div class="tools">
   <button id="zIn" aria-label="Yakınlaştır" title="Yakınlaştır">+</button>
@@ -1249,7 +1249,8 @@ floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, -0.6 + FD / 2); floor.
 const W = 3550, H = 2560, D = 580, T = 18, AT = 8, B = 100, DY = D - AT, KT = 20, G = 3;
 const MODX = [0, 1030, 2060, 3090, 3550];                 // bölme sınırları (dikme ekseni)
 const Z_ALT = B + T, Z_RAF = 2100, ROD = Z_RAF - 55, DRW_TOP = 870;
-const SIF_TOP = 775, STT = 25, TL = 1000, HALF = 290;        // makyaj masası üstü 80 cm, boyu 100 cm; sağ bölme 29 + 29
+const SIF_TOP = 775, STT = 25, TL = 700, TW = 400, TTH = 160; // makyaj tablası: üstü 80 cm, 70 × 40, kalınlık 16 cm
+const FRONT = 200;                                           // sağ bölme: önde 20 cm, 18 mm ara panel, arkada 36,2 cm
 const DOOR_W = (1030 - 2 * G) / 2, DOOR_H = H - B - G;      // 512 × 2457
 const DOL = 18, DOLG = 80, R = 13, GRAY = 450;
 const drawers = [], doors = [];
@@ -1330,91 +1331,77 @@ function shelfSection(w, i) {
     box(w, sx + 40 + j * 320, Z_ALT, -DY + 60, 280, 200, 380, M([0xd8cdb8, 0xbfae95, 0xe4dccb][j], { roughness: 0.9 }));
 }
 
-// Sağ 46 cm: kapaksız, 29 + 29 cm derinlikte ikiye bölünmüş.
-//   Ön 29: üstte 3 çerçeveli açık niş (dışarıdan), altı makyaj masasının arkasında kalır.
-//   Arka 29: 3. bölmenin içinden, yandan ulaşılır (dikmenin arka yarısı çekmece bloğunun üstünde açık).
+// Sağ 46 cm: kapaksız, derinlikte bölünmüş: önde 20 cm, 18 mm ara panel, arkada 36,2 cm.
+//   Ön 20: üstte 2 çerçeveli niş, altında açık raflar (dışarıdan).
+//   Arka 36,2: 3. bölmenin içinden, yandan ulaşılır (dikmenin arka kısmı çekmece bloğunun üstünde açık).
 function framedFront(g, x, y, z, w, h, F) {                                          // çekmece önü: kumtaşı çerçeve + göbek
   box(g, x, y, z, F, h, KT, mFrame);
   box(g, x + w - F, y, z, F, h, KT, mFrame);
   box(g, x + F, y, z, w - 2 * F, F, KT, mFrame);
   box(g, x + F, y + h - F, z, w - 2 * F, F, KT, mFrame);
   box(g, x + F, y + F, z + 3, w - 2 * F, h - 2 * F, 10, mGobek, true, false);
-  box(g, x + F + 25, y + F + 25, z + 3, w - 2 * F - 50, h - 2 * F - 50, 14, mGobek);
+  box(g, x + F + 20, y + F + 20, z + 3, w - 2 * F - 40, h - 2 * F - 40, 14, mGobek);
 }
+const NB = 1500;                                                                     // nişlerin taban rafı
+const NH = (H - T - NB - 2 * T) / 2, NMID = NB + T + NH;                              // niş yüksekliği, aradaki raf
 function rightColumn(w) {
   const [sx, iw] = inner(3);
   const x0 = MODX[3] + G / 2, fw = W - x0;
-  box(w, sx, B + T, -HALF - T / 2, iw, H - B - 2 * T, T, mInner);                  // ortadan bölen ara panel
-  const bot = SIF_TOP + STT, nh = (H - T - bot - 2 * T) / 3;
-  const shelfY = [bot + nh, bot + 2 * nh + T];
-  // ön 29: alttaki iki raf masanın arkasında, üstte 3 niş
-  [B + T + (bot - T - B - T) / 2 - T / 2, bot - T, ...shelfY].forEach(y => box(w, sx, y, -HALF + T / 2, iw, T, HALF - T / 2, mInner));
-  // arka 29: çekmece bloğu hizasından yukarı, nişlerle aynı raf hizaları
-  [DRW_TOP, ...shelfY].forEach(y => box(w, sx, y, -DY, iw, T, DY - HALF - T / 2, mInner));
-  const ny = k => bot + k * (nh + T);
-  // niş çerçevesi: iki dikme, üst kayıt, her rafın önünde ara kayıt, altta kayıt
+  box(w, sx, B + T, -FRONT - T, iw, H - B - 2 * T, T, mInner);                       // ara panel
+  const frontY = [380, SIF_TOP + STT - T, 1150, NB, NMID];
+  frontY.forEach(y => box(w, sx, y, -FRONT, iw, T, FRONT, mInner));
+  const backY = [DRW_TOP, 1150, NB, NMID];
+  backY.forEach(y => box(w, sx, y, -DY, iw, T, DY - FRONT - T, mInner));
+  // niş çerçevesi: iki dikme, üst kayıt, aradaki ve alttaki rafın önünde kayıt
   const F = 55;
-  box(w, x0, bot, 0, F, H - bot, KT, mFrame);
-  box(w, W - F, bot, 0, F, H - bot, KT, mFrame);
+  box(w, x0, NB + T / 2 - F / 2, 0, F, H - (NB + T / 2 - F / 2), KT, mFrame);
+  box(w, W - F, NB + T / 2 - F / 2, 0, F, H - (NB + T / 2 - F / 2), KT, mFrame);
   box(w, x0 + F, H - F, 0, fw - 2 * F, F, KT, mFrame);
-  box(w, x0 + F, bot, 0, fw - 2 * F, 40, KT, mFrame);
-  shelfY.forEach(y => box(w, x0 + F, y + T / 2 - F / 2, 0, fw - 2 * F, F, KT, mFrame));
-  // ön niş süsleri
+  [NB, NMID].forEach(y => box(w, x0 + F, y + T / 2 - F / 2, 0, fw - 2 * F, F, KT, mFrame));
+  // ön süsler
   [[0x8a6f5a, 230], [0x44546a, 260], [0xc9b9a4, 210], [0x7f8c86, 240]].forEach(([c, h], j) =>
-    box(w, sx + 70 + j * 34, ny(2), -HALF + 40, 30, h, 200, M(c, { roughness: 0.9 })));
+    box(w, sx + 70 + j * 34, NMID + T, -FRONT + 20, 30, h, 150, M(c, { roughness: 0.9 })));
   const vase = new THREE.Mesh(new THREE.CylinderGeometry(mm(55), mm(42), mm(200), 24), M(0xa8b5ad, { roughness: 0.4 }));
-  vase.position.set(mm(sx + iw - 130), mm(ny(1) + 100), mm(-HALF / 2)); vase.castShadow = true; w.add(vase);
-  box(w, sx + 70, ny(1), -HALF + 50, 160, 120, 160, M(0xd8cdb8, { roughness: 0.8 }));
+  vase.position.set(mm(sx + iw - 130), mm(NB + T + 100), mm(-FRONT / 2)); vase.castShadow = true; w.add(vase);
+  box(w, sx + 60, NB + T, -FRONT + 30, 160, 110, 140, M(0xd8cdb8, { roughness: 0.8 }));
+  box(w, sx + 40, 1150 + T, -FRONT + 20, 300, 90, 150, M(0xe4dccb, { roughness: 0.8 }));
   const jar = new THREE.Mesh(new THREE.CylinderGeometry(mm(40), mm(40), mm(110), 20), M(0xf3ead8, { roughness: 0.3 }));
-  jar.position.set(mm(sx + 130), mm(bot + 55), mm(-HALF / 2)); jar.castShadow = true; w.add(jar);
+  jar.position.set(mm(sx + 120), mm(SIF_TOP + STT + 55), mm(-FRONT / 2)); jar.castShadow = true; w.add(jar);
+  box(w, sx + 40, 380 + T, -FRONT + 20, iw - 80, 220, 150, M(0xd8cdb8, { roughness: 0.9 }));
   // arka bölmelerde katlı havlu ve kutular
-  [[DRW_TOP + T, 0xd9d2c3], [shelfY[0] + T, 0xb7a58d], [shelfY[1] + T, 0xe8e2d6]].forEach(([y, c], j) =>
-    box(w, sx + 40, y, -DY + 30, iw - 80, 90 + j * 30, 220, M(c, { roughness: 1 }), false));
+  [[DRW_TOP + T, 0xd9d2c3], [1150 + T, 0xb7a58d], [NB + T, 0xe8e2d6], [NMID + T, 0xc9b9a4]].forEach(([y, c], j) =>
+    box(w, sx + 40, y, -DY + 30, iw - 80, 90 + (j % 2) * 40, 280, M(c, { roughness: 1 }), false));
 }
 
-// Makyaj masası: 46'lık bölmenin önünden gardıroba dik, 100 × 46 × 80 cm.
-// Çekmeceler 100 cm'lik uzun yüzde, 3. bölmeye bakan tarafta; en üstte kare bölmeli aksesuar çekmecesi.
+// Makyaj tablası: sağ duvara dayalı, gardıroba dik; 70 cm odaya uzanır, eni 40, kalınlığı 16 cm, askıda.
+// Tek çekmece 70 cm'lik uzun yüzde (oturulan taraf), içi kare kare aksesuar bölmeli. Ayna sağ duvarda.
 function makeupTable(w) {
-  const x0 = MODX[3] + G / 2, xf = x0 + KT;                                         // xf: çekmece önlerinin arkası
-  const z0 = 0, z1 = TL;
-  box(w, W - T, 0, z0, T, SIF_TOP, TL, mBody);                                       // dış yan
-  box(w, xf, 0, z0, W - T - xf, SIF_TOP, T, mBody);                                  // gardıroba dayanan uç
-  box(w, xf, 0, z1 - T, W - T - xf, SIF_TOP, T, mBody);                              // odaya bakan uç
-  box(w, xf + 40, 0, z0 + T, T, B, TL - 2 * T, mBody);                               // baza (içeride)
-  box(w, xf + T, B, z0 + T, W - 2 * T - xf, T, TL - 2 * T, mInner);                   // taban
-  box(w, x0 - 15, SIF_TOP, z0, W - x0 + 15, STT, TL + 15, mFrame);                   // tabla
-  const hs = [150, 0, 0, 0];
-  hs[1] = hs[2] = hs[3] = (SIF_TOP - B - hs[0] - 4 * G) / 3;
-  let y = SIF_TOP - G / 2 - hs[0];
-  const len = TL - G, zi0 = z0 + T + R, zi1 = z1 - T - R, DD = 380;
-  hs.forEach((h, i) => {
-    if (i) y -= h + G;
-    const g = new THREE.Group(); w.add(g);
-    // ön: yerel x boyu masanın boyu (dünya +z), yerel +z yüzü 3. bölmeye (dünya -x) bakar
-    const f = new THREE.Group(); f.rotation.y = -Math.PI / 2; f.position.set(mm(xf), 0, mm(z0 + G / 2)); g.add(f);
-    framedFront(f, 0, y, 0, len, h, 50);
-    const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(192), 16), mMetal);
-    bar.rotation.z = Math.PI / 2; bar.position.set(mm(len / 2), mm(y + h / 2), mm(KT + 26)); bar.castShadow = true; f.add(bar);
-    [-80, 80].forEach(o => { const s = new THREE.Mesh(new THREE.CylinderGeometry(mm(4), mm(4), mm(26), 10), mMetal);
-      s.rotation.x = Math.PI / 2; s.position.set(mm(len / 2 + o), mm(y + h / 2), mm(KT + 13)); f.add(s); });
-    // kutu
-    const by = y + 20, hh = h - 50;
-    box(g, xf, by, zi0, DD, hh, T, mInner);
-    box(g, xf, by, zi1 - T, DD, hh, T, mInner);
-    box(g, xf + DD - T, by, zi0 + T, T, hh, zi1 - zi0 - 2 * T, mInner);
-    box(g, xf, by - 8, zi0, DD, 8, zi1 - zi0, mBack, false);
-    if (i === 0) {                                                                   // kare kare aksesuar bölmeleri
-      const gx0 = xf, gx1 = xf + DD - T, gz0 = zi0 + T, gz1 = zi1 - T, P = 6;
-      const nx = Math.round((gx1 - gx0) / 90), nz = Math.round((gz1 - gz0) / 90);
-      const mFelt = M(0x8f7f6c, { roughness: 1 });
-      box(g, gx0, by, gz0, gx1 - gx0, 3, gz1 - gz0, mFelt, false, false);
-      for (let k = 1; k < nx; k++) box(g, gx0 + k * (gx1 - gx0) / nx - P / 2, by, gz0, P, hh - 10, gz1 - gz0, mFrame, false, false);
-      for (let k = 1; k < nz; k++) box(g, gx0, by, gz0 + k * (gz1 - gz0) / nz - P / 2, gx1 - gx0, hh - 10, P, mFrame, false, false);
-    }
-    box(w, xf, by + hh / 2 - 22, zi0 - R, DD, 45, R, mRail, false);
-    box(w, xf, by + hh / 2 - 22, zi1, DD, 45, R, mRail, false);
-    drawers.push({ g, max: mm(340), d: i, free: true, axis: 'x' });
-  });
+  const xl = W - TW, xf = xl + KT, y0 = SIF_TOP + STT - TTH;                        // xl: çekmece önü dış yüzü
+  box(w, xf, y0, 0, W - xf, T, TL, mBody);                                           // alt
+  box(w, xf, y0 + T, 0, W - xf, TTH - T - STT, T, mBody);                            // gardıroba dayanan uç
+  box(w, xf, y0 + T, TL - T, W - xf, TTH - T - STT, T, mBody);                       // odaya bakan uç
+  box(w, W - T, y0 + T, T, T, TTH - T - STT, TL - 2 * T, mBody);                     // duvar tarafı
+  box(w, xl - 15, SIF_TOP, 0, TW + 15, STT, TL + 15, mFrame);                        // tabla
+  const g = new THREE.Group(); w.add(g);
+  const h = TTH - STT - G, y = y0, len = TL - G;
+  const f = new THREE.Group(); f.rotation.y = -Math.PI / 2; f.position.set(mm(xf), 0, mm(G / 2)); g.add(f);
+  framedFront(f, 0, y, 0, len, h, 32);
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(192), 16), mMetal);
+  bar.rotation.z = Math.PI / 2; bar.position.set(mm(len / 2), mm(y + h / 2), mm(KT + 26)); bar.castShadow = true; f.add(bar);
+  [-80, 80].forEach(o => { const s = new THREE.Mesh(new THREE.CylinderGeometry(mm(4), mm(4), mm(26), 10), mMetal);
+    s.rotation.x = Math.PI / 2; s.position.set(mm(len / 2 + o), mm(y + h / 2), mm(KT + 13)); f.add(s); });
+  const zi0 = T + R, zi1 = TL - T - R, DD = TW - KT - T - 20, by = y0 + T + 6, hh = TTH - STT - T - 16;
+  box(g, xf, by, zi0, DD, hh, T, mInner);
+  box(g, xf, by, zi1 - T, DD, hh, T, mInner);
+  box(g, xf + DD - T, by, zi0 + T, T, hh, zi1 - zi0 - 2 * T, mInner);
+  box(g, xf, by - 6, zi0, DD, 6, zi1 - zi0, mBack, false);
+  // kare kare aksesuar bölmeleri
+  const gx0 = xf, gx1 = xf + DD - T, gz0 = zi0 + T, gz1 = zi1 - T, P = 6;
+  const nx = Math.round((gx1 - gx0) / 85), nz = Math.round((gz1 - gz0) / 85);
+  box(g, gx0, by, gz0, gx1 - gx0, 3, gz1 - gz0, M(0x8f7f6c, { roughness: 1 }), false, false);
+  for (let k = 1; k < nx; k++) box(g, gx0 + k * (gx1 - gx0) / nx - P / 2, by, gz0, P, hh - 10, gz1 - gz0, mFrame, false, false);
+  for (let k = 1; k < nz; k++) box(g, gx0, by, gz0 + k * (gz1 - gz0) / nz - P / 2, gx1 - gx0, hh - 10, P, mFrame, false, false);
+  drawers.push({ g, max: mm(300), d: 0, free: true, axis: 'x' });
 }
 
 const ward = new THREE.Group();
@@ -1428,8 +1415,8 @@ scene.add(ward);
   box(w, T, 0, -T, W - 2 * T, B, T);
   box(w, T, 0, -DY, W - 2 * T, B, T);
   for (let i = 1; i <= 2; i++) box(w, MODX[i] - T / 2, B + T, -DY, T, H - B - 2 * T, DY);
-  box(w, MODX[3] - T / 2, B + T, -HALF, T, H - B - 2 * T, HALF);                     // dikme 3: ön yarısı tam boy
-  box(w, MODX[3] - T / 2, B + T, -DY, T, DRW_TOP - B, DY - HALF);                    // arka yarısı çekmece bloğu hizasına kadar
+  box(w, MODX[3] - T / 2, B + T, -FRONT - T, T, H - B - 2 * T, FRONT + T);           // dikme 3: ön kısmı tam boy
+  box(w, MODX[3] - T / 2, B + T, -DY, T, DRW_TOP - B, DY - FRONT - T);               // arka kısmı çekmece bloğu hizasına kadar
   box(w, 0, 0, -D, W, H, AT, mBack, false);
   hangingSection(w, 0, 0);
   shelfSection(w, 1);
@@ -1450,10 +1437,20 @@ scene.add(ward);
 })(ward);
 
 // duvar (arkada); kamera arkaya geçince gizlenir
-const wall = new THREE.Mesh(new THREE.BoxGeometry(FW, 2.9, 0.1), mWall);
-wall.position.set(0, 1.45, mm(-D - 5) - 0.05); wall.receiveShadow = true; scene.add(wall);
-const skirt = new THREE.Mesh(new THREE.BoxGeometry(FW, 0.08, 0.012), mWhite);
-skirt.position.set(0, 0.04, mm(-D - 5) + 0.006); wall.add(skirt); skirt.position.sub(wall.position);
+const RX = mm(W / 2 + 2), BWL = RX + FW / 2;
+const wall = new THREE.Mesh(new THREE.BoxGeometry(BWL, 2.9, 0.1), mWall);
+wall.position.set(RX - BWL / 2, 1.45, mm(-D - 5) - 0.05); wall.receiveShadow = true; scene.add(wall);
+const skirt = new THREE.Mesh(new THREE.BoxGeometry(BWL, 0.08, 0.012), mWhite);
+skirt.position.set(0, 0.04 - 1.45, 0.056); wall.add(skirt);
+// sağ duvar (gardırobun sağında) ve tablanın üstündeki ayna
+const RWL = 3.4, rwall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.9, RWL), mWall);
+rwall.position.set(RX + 0.05, 1.45, mm(-D - 5) - 0.1 + RWL / 2); rwall.receiveShadow = true; scene.add(rwall);
+const rskirt = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.08, RWL), mWhite);
+rskirt.position.set(-0.056, 0.04 - 1.45, 0); rwall.add(rskirt);
+const mirFrame = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.84, 0.64), mFrame);
+mirFrame.position.set(RX - 0.01, 1.35, mm(TL / 2)); mirFrame.castShadow = true; scene.add(mirFrame);
+const mirror = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.8), M(0xd7e2ea, { metalness: 0.25, roughness: 0.12, emissive: 0x8fa3b2, emissiveIntensity: 0.35 }));
+mirror.rotation.y = -Math.PI / 2; mirror.position.set(RX - 0.021, 1.35, mm(TL / 2)); scene.add(mirror);
 
 // ---------------- Ölçüler ----------------
 const dims = new THREE.Group(); dims.visible = false; ward.add(dims);
@@ -1483,20 +1480,22 @@ function buildDims() {
   dim([0, y2, zf], [W, y2, zf], [0, 45, 0], '355');
   dim([-140, 0, zf], [-140, H, zf], [45, 0, 0], '256', [-360, H / 2, zf]);
   dim([W + 140, H, -D], [W + 140, H, KT], [0, 45, 0], '58 + 2', [W + 400, H + 120, (KT - D) / 2]);
-  dim([W + 140, 0, TL], [W + 140, SIF_TOP + STT, TL], [45, 0, 0], 'masa 80', [W + 400, (SIF_TOP + STT) / 2, TL]);
-  dim([W + 140, SIF_TOP + STT + 60, 0], [W + 140, SIF_TOP + STT + 60, TL], [0, 45, 0], '100', [W + 140, SIF_TOP + STT + 200, TL / 2]);
-  dim([MODX[3] + G / 2, SIF_TOP + STT + 60, TL + 120], [W, SIF_TOP + STT + 60, TL + 120], [0, 45, 0], '46', [(MODX[3] + W) / 2, SIF_TOP + STT + 200, TL + 120]);
-  dim([W + 140, H - 400, -D], [W + 140, H - 400, -HALF], [0, 45, 0], '29', [W + 140, H - 250, -D + 145]);
-  dim([W + 140, H - 400, -HALF], [W + 140, H - 400, 0], [0, 45, 0], '29', [W + 140, H - 560, -HALF / 2]);
+  const TY = SIF_TOP + STT, XL = W - TW;
+  dim([XL - 120, 0, TL + 220], [XL - 120, TY, TL + 220], [45, 0, 0], 'masa 80', [XL - 340, TY / 2, TL + 220]);
+  dim([XL - 60, TY - TTH, TL + 60], [XL - 60, TY, TL + 60], [30, 0, 0], '16', [XL - 230, TY - TTH / 2, TL + 60]);
+  dim([XL - 120, TY + 60, 0], [XL - 120, TY + 60, TL], [0, 45, 0], '70', [XL - 120, TY + 190, TL / 2]);
+  dim([XL, TY + 60, TL + 120], [W, TY + 60, TL + 120], [0, 45, 0], '40', [XL + TW / 2, TY + 190, TL + 120]);
+  dim([W - 230, H + 60, -FRONT], [W - 230, H + 60, 0], [45, 0, 0], '20', [W - 230, H + 190, -FRONT / 2]);
+  dim([W - 230, H + 60, -D], [W - 230, H + 60, -FRONT - T], [45, 0, 0], '36,2', [W - 230, H + 190, (-D - FRONT - T) / 2]);
 }
 (document.fonts ? document.fonts.load('600 50px Figtree').catch(() => {}) : Promise.resolve()).then(buildDims);
 
 // ---------------- Görünümler ----------------
 const views = {
   on:     { min: [-2.25, 0, -0.6], max: [2.4, 2.95, 0.05], dir: [0, 0.12, 1], fov: 40, pad: 1.0 },
-  aci:    { min: [-2.1, 0, -0.6], max: [2.3, 2.95, 1.1], dir: [0.75, 0.32, 1], fov: 40, pad: 0.98 },
-  makyaj: { min: [1.0, 0, -0.6], max: [1.8, 2.56, 1.05], dir: [-0.85, 0.35, 0.75], fov: 45, pad: 1.05 },
-  ust:    { min: [-2.1, 0, -0.6], max: [2.3, 2.6, 1.2], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
+  aci:    { min: [-2.3, 0, -0.6], max: [2.0, 2.95, 0.95], dir: [-0.75, 0.32, 1], fov: 40, pad: 0.98 },
+  makyaj: { min: [0.9, 0, -0.6], max: [1.78, 2.3, 0.85], dir: [-1, 0.3, 0.6], fov: 45, pad: 1.05 },
+  ust:    { min: [-2.1, 0, -0.6], max: [2.0, 2.6, 1.0], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
 };
 let anim = null, curView = 'on', userMoved = false;
 const panelEl = document.querySelector('.panel');
@@ -1610,6 +1609,7 @@ function loop(now) {
   }
   controls.update();
   wall.visible = camera.position.z > wall.position.z;
+  rwall.visible = mirror.visible = mirFrame.visible = camera.position.x < rwall.position.x;
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
