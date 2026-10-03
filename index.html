@@ -57,11 +57,10 @@
 <div class="panel">
   <div class="brand">Modilya</div>
   <h1>Gardırop · Makyaj Köşeli</h1>
-  <div class="sub">355 × 256 cm · krokiye göre 3B taslak</div>
+  <div class="sub">Suat Bey için hazırlanmıştır</div>
   <div class="btns">
     <button id="bDoor">Kapakları aç</button>
     <button id="bDrw">Çekmeceleri aç</button>
-    <button id="bDim">Ölçüleri göster</button>
   </div>
   <div class="lbl">Görünüm</div>
   <div class="btns">
@@ -70,20 +69,7 @@
     <button data-v="makyaj">Makyaj köşesi</button>
     <button data-v="ust">Üstten</button>
   </div>
-  <div class="lbl">Kapak göbeği</div>
-  <div class="btns">
-    <button data-g="krem" class="on">Krem</button>
-    <button data-g="kum">Kumtaşı</button>
-  </div>
-  <div class="spec">
-    <b>Gövde</b> 355 × 256 × 58 cm, kapakla 60 cm · krem<br>
-    <b>Kapaklar</b> 6 tek göbekli menteşeli kapak · çerçeve kumtaşı<br>
-    <b>1. ve 3. bölme</b> üst raf, askı, 4 iç çekmece<br>
-    <b>2. bölme</b> 7 raf<br>
-    <b>Sağ 46 cm</b> kapaksız, derinlik 20 + 36,2 bölünmüş: önde tabladan yukarı 2 çerçeveli niş, tabla hizası kör, altında kapaklı dolap; arkadaki raflara 3. bölmenin içinden ulaşılır<br>
-    <b>Makyaj tablası</b> 70 × 40 × 16 cm, sağ duvara dayalı, gardıroba dik; tek çekmece, içi delikli aksesuar tablalı. Sağ duvarda yuvarlak köşeli ayna, sağında oda kapısı
-  </div>
-  <div class="note">Krokiye göre hazırlandı. Baza 10 cm, tabla yüksekliği 80 cm, ayna ölçüsü, kapının yeri ve kulp tipi tahminidir. Renkler numuneye göre değişir.</div>
+  <div class="note">Renkler numuneye göre değişebilir.</div>
 </div>
 <div class="tools">
   <button id="zIn" aria-label="Yakınlaştır" title="Yakınlaştır">+</button>
@@ -1272,8 +1258,7 @@ function panelDoor(leftHinge, DOOR_W = window.DOOR_W0, DOOR_H = window.DOOR_H0, 
   box(p, x0 + F, 0, 0, DOOR_W - 2 * F, F, KT, mFrame);
   box(p, x0 + F, DOOR_H - F, 0, DOOR_W - 2 * F, F, KT, mFrame);
   const gobek = (y, h) => {
-    box(p, x0 + F, y, 3, DOOR_W - 2 * F, h, 10, mGobek, true, false);           // çerçeveden 7 mm içeride
-    box(p, x0 + F + 38, y + 38, 3, DOOR_W - 2 * F - 76, h - 76, 14, mGobek);    // kabarık göbek
+    box(p, x0 + F, y, 3, DOOR_W - 2 * F, h, 10, mGobek, true, false);           // düz krem yüzey, çerçeveden 7 mm içeride
   };
   gobek(F, DOOR_H - 2 * F);
   const hx = leftHinge ? x0 + DOOR_W - F / 2 : x0 + F / 2;                     // kulp serbest kenarda
@@ -1341,7 +1326,6 @@ function framedFront(g, x, y, z, w, h, F) {                                     
   box(g, x + F, y, z, w - 2 * F, F, KT, mFrame);
   box(g, x + F, y + h - F, z, w - 2 * F, F, KT, mFrame);
   box(g, x + F, y + F, z + 3, w - 2 * F, h - 2 * F, 10, mGobek, true, false);
-  box(g, x + F + 20, y + F + 20, z + 3, w - 2 * F - 40, h - 2 * F - 40, 14, mGobek);
 }
 const NB = SIF_TOP + STT - T;                                                       // alt nişin tabanı tabla hizasında (80 cm)
 const NH = (H - T - NB - 2 * T) / 2, NMID = NB + T + NH;                              // iki niş, aradaki raf
@@ -1457,14 +1441,18 @@ scene.add(ward);
 })(ward);
 
 // duvar (arkada); kamera arkaya geçince gizlenir
-const RX = mm(W / 2 + 2), BWL = RX + FW / 2;
+const RX = mm(W / 2 + 2), LX = -mm(W / 2 + 2), BWL = RX - LX;
 const wall = new THREE.Mesh(new THREE.BoxGeometry(BWL, 2.9, 0.1), mWall);
-wall.position.set(RX - BWL / 2, 1.45, mm(-D - 5) - 0.05); wall.receiveShadow = true; scene.add(wall);
+wall.position.set((RX + LX) / 2, 1.45, mm(-D - 5) - 0.05); wall.receiveShadow = true; scene.add(wall);
 const skirt = new THREE.Mesh(new THREE.BoxGeometry(BWL, 0.08, 0.012), mWhite);
 skirt.position.set(0, 0.04 - 1.45, 0.056); wall.add(skirt);
 // sağ duvar (gardırobun sağında) ve tablanın üstündeki ayna
-floor.geometry.dispose(); floor.geometry = new THREE.PlaneGeometry(RX + FW / 2, FD);
-floor.position.x = (RX - FW / 2) / 2; ftex.repeat.set((RX + FW / 2) / 1.2, FD / 1.6);
+floor.geometry.dispose(); floor.geometry = new THREE.PlaneGeometry(RX - LX, FD);
+floor.position.x = (RX + LX) / 2; ftex.repeat.set((RX - LX) / 1.2, FD / 1.6);
+const lwall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.9, FD + 0.1), mWall);
+lwall.position.set(LX - 0.05, 1.45, -0.6 + FD / 2); lwall.receiveShadow = true; scene.add(lwall);
+const lskirt = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.08, FD + 0.1), mWhite);
+lskirt.position.set(0.056, 0.04 - 1.45, 0); lwall.add(lskirt);
 const RWL = FD + 0.1, rwall = new THREE.Mesh(new THREE.BoxGeometry(0.1, 2.9, RWL), mWall);
 rwall.position.set(RX + 0.05, 1.45, -0.6 + FD / 2); rwall.receiveShadow = true; scene.add(rwall);
 const rskirt = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.08, RWL), mWhite);
@@ -1537,14 +1525,13 @@ function buildDims() {
   dim([W - 230, H + 60, -FRONT], [W - 230, H + 60, 0], [45, 0, 0], '20', [W - 230, H + 190, -FRONT / 2]);
   dim([W - 230, H + 60, -D], [W - 230, H + 60, -FRONT - T], [45, 0, 0], '36,2', [W - 230, H + 190, (-D - FRONT - T) / 2]);
 }
-(document.fonts ? document.fonts.load('600 50px Figtree').catch(() => {}) : Promise.resolve()).then(buildDims);
 
 // ---------------- Görünümler ----------------
 const views = {
-  on:     { min: [-2.25, 0, -0.6], max: [2.4, 2.95, 0.05], dir: [0, 0.12, 1], fov: 40, pad: 1.0 },
-  aci:    { min: [-2.3, 0, -0.6], max: [2.0, 2.95, 0.95], dir: [-0.75, 0.32, 1], fov: 40, pad: 0.98 },
+  on:     { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 0.05], dir: [0, 0.12, 1], fov: 40, pad: 1.0 },
+  aci:    { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 0.75], dir: [-0.75, 0.32, 1], fov: 40, pad: 0.98 },
   makyaj: { min: [0.9, 0, -0.6], max: [1.78, 2.56, 1.4], dir: [-1.1, 0.25, 1], fov: 45, pad: 1.05 },
-  ust:    { min: [-2.1, 0, -0.6], max: [2.0, 2.6, 1.0], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
+  ust:    { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 1.0], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
 };
 let anim = null, curView = 'on', userMoved = false;
 const panelEl = document.querySelector('.panel');
@@ -1587,17 +1574,11 @@ function goView(k, instant) {
 // ---------------- Etkileşim ----------------
 let doorT = 0, doorTarget = 0, wdrT = 0, drwT = 0, drwTarget = 0;
 const bDoor = document.getElementById('bDoor'), bDrw = document.getElementById('bDrw');
-const bDim = document.getElementById('bDim');
 bDoor.onclick = () => { doorTarget = doorTarget ? 0 : 1; bDoor.classList.toggle('on', !!doorTarget); bDoor.textContent = doorTarget ? 'Kapakları kapat' : 'Kapakları aç';
   if (!doorTarget && drwTarget) bDrw.onclick(); };
 bDrw.onclick = () => { drwTarget = drwTarget ? 0 : 1; bDrw.classList.toggle('on', !!drwTarget); bDrw.textContent = drwTarget ? 'Çekmeceleri kapat' : 'Çekmeceleri aç';
   if (drwTarget && !doorTarget) bDoor.onclick(); };
-bDim.onclick = () => { dims.visible = !dims.visible; bDim.classList.toggle('on', dims.visible); bDim.textContent = dims.visible ? 'Ölçüleri gizle' : 'Ölçüleri göster'; };
 document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => goView(b.dataset.v));
-document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => {
-  mGobek.color.setHex(b.dataset.g === 'kum' ? KUMTASI : KREM);
-  document.querySelectorAll('[data-g]').forEach(x => x.classList.toggle('on', x === b));
-});
 controls.addEventListener('start', () => { userMoved = true; anim = null; });
 
 function zoomBy(f) {
@@ -1659,6 +1640,7 @@ function loop(now) {
   controls.update();
   wall.visible = camera.position.z > wall.position.z;
   rwall.visible = mirror.visible = mirFrame.visible = rdoor.visible = camera.position.x < rwall.position.x;
+  lwall.visible = camera.position.x > lwall.position.x;
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
