@@ -61,7 +61,6 @@
   <div class="btns">
     <button id="bDoor">Kapakları aç</button>
     <button id="bDrw">Çekmeceleri aç</button>
-    <button id="bTbl">Masayı çek</button>
     <button id="bDim">Ölçüleri göster</button>
   </div>
   <div class="lbl">Görünüm</div>
@@ -78,12 +77,12 @@
   </div>
   <div class="spec">
     <b>Gövde</b> 355 × 256 × 58 cm, kapakla 60 cm · krem<br>
-    <b>Kapaklar</b> 6 göbekli menteşeli kapak · çerçeve kumtaşı<br>
+    <b>Kapaklar</b> 6 tek göbekli menteşeli kapak · çerçeve kumtaşı<br>
     <b>1. ve 3. bölme</b> üst raf, askı, 4 iç çekmece<br>
     <b>2. bölme</b> 7 raf<br>
-    <b>Sağ 46 cm</b> kapaksız: 3 açık niş, çekilir makyaj masası
+    <b>Sağ 46 cm</b> kapaksız: 3 çerçeveli açık niş, altta 3 çekmeceli şifonyer tipi makyaj masası
   </div>
-  <div class="note">Krokiye göre hazırlandı. Baza 10 cm, masa yüksekliği 76 cm, kulp tipi ve kapaktaki ara kayıt tahminidir. Renkler numuneye göre değişir.</div>
+  <div class="note">Krokiye göre hazırlandı. Baza 10 cm, masa yüksekliği 80 cm, masanın 30 cm öne taşması, çekmece sayısı ve kulp tipi tahminidir. Renkler numuneye göre değişir.</div>
 </div>
 <div class="tools">
   <button id="zIn" aria-label="Yakınlaştır" title="Yakınlaştır">+</button>
@@ -108,7 +107,7 @@
         <li><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="11" y="5" width="18" height="30" rx="9"/><path d="M20 5v11M11 16h18"/><path d="M28.5 15V14A8.5 8.5 0 0 0 20 5.5V16z" fill="currentColor"/></svg><div><b>Sağ tıkla sürükleyin</b><span>Görüntüyü yana kaydırır</span></div></li>
       </ul></section>
     </div>
-    <p class="tut-tip">Panelden kapakları, çekmeceleri ve makyaj masasını açabilir, hazır görünümlere geçebilirsiniz. Sağ üstteki <b>+</b> ve <b>−</b> ile yakınlaşıp uzaklaşın. Kaybolursanız <b>Sığdır</b>'a basın. Bu rehbere <b>?</b> ile tekrar ulaşırsınız.</p>
+    <p class="tut-tip">Panelden kapakları ve çekmeceleri açabilir, hazır görünümlere geçebilirsiniz. Sağ üstteki <b>+</b> ve <b>−</b> ile yakınlaşıp uzaklaşın. Kaybolursanız <b>Sığdır</b>'a basın. Bu rehbere <b>?</b> ile tekrar ulaşırsınız.</p>
     <button id="tutOk" class="primary">Anladım, başla</button>
   </div>
 </div>
@@ -1249,7 +1248,7 @@ floor.rotation.x = -Math.PI / 2; floor.position.set(0, 0, -0.6 + FD / 2); floor.
 const W = 3550, H = 2560, D = 580, T = 18, AT = 8, B = 100, DY = D - AT, KT = 20, G = 3;
 const MODX = [0, 1030, 2060, 3090, 3550];                 // bölme sınırları (dikme ekseni)
 const Z_ALT = B + T, Z_RAF = 2100, ROD = Z_RAF - 55, DRW_TOP = 870;
-const MAK_Y = 742, NIS0 = 1050;                             // masa üstü 76 cm, ilk niş rafı
+const SIF_TOP = 775, STT = 25, SIF_OUT = 300;                // makyaj masası üstü 80 cm, gardıroptan 30 cm öne taşar
 const DOOR_W = (1030 - 2 * G) / 2, DOOR_H = H - B - G;      // 512 × 2457
 const DOL = 18, DOLG = 80, R = 13, GRAY = 450;
 const drawers = [], doors = [];
@@ -1261,22 +1260,19 @@ function inner(i) {
   return [a, b - a];
 }
 
-// Göbekli kapak: kumtaşı çerçeve, yüklük hizasında ara kayıt, iki göbek
+// Göbekli kapak: kumtaşı çerçeve, tek göbek
 function panelDoor(leftHinge) {
   const p = new THREE.Group();
   const x0 = leftHinge ? 0 : -DOOR_W, F = 75;
-  const midY = Z_RAF - B - G / 2;
   box(p, x0, 0, 0, F, DOOR_H, KT, mFrame);
   box(p, x0 + DOOR_W - F, 0, 0, F, DOOR_H, KT, mFrame);
   box(p, x0 + F, 0, 0, DOOR_W - 2 * F, F, KT, mFrame);
   box(p, x0 + F, DOOR_H - F, 0, DOOR_W - 2 * F, F, KT, mFrame);
-  box(p, x0 + F, midY - F / 2, 0, DOOR_W - 2 * F, F, KT, mFrame);
   const gobek = (y, h) => {
     box(p, x0 + F, y, 3, DOOR_W - 2 * F, h, 10, mGobek, true, false);           // çerçeveden 7 mm içeride
     box(p, x0 + F + 38, y + 38, 3, DOOR_W - 2 * F - 76, h - 76, 14, mGobek);    // kabarık göbek
   };
-  gobek(F, midY - F / 2 - F);
-  gobek(midY + F / 2, DOOR_H - F - (midY + F / 2));
+  gobek(F, DOOR_H - 2 * F);
   const hx = leftHinge ? x0 + DOOR_W - F / 2 : x0 + F / 2, hy = 1050;          // kulp serbest kenarda
   const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(192), 16), mMetal);
   bar.position.set(mm(hx), mm(hy), mm(KT + 28)); bar.castShadow = true; p.add(bar);
@@ -1333,30 +1329,60 @@ function shelfSection(w, i) {
     box(w, sx + 40 + j * 320, Z_ALT, -DY + 60, 280, 200, 380, M([0xd8cdb8, 0xbfae95, 0xe4dccb][j], { roughness: 0.9 }));
 }
 
-// Sağ 46 cm: kapaksız, 3 açık niş, altında çekilir makyaj masası
-let table;
+// Sağ 46 cm: kapaksız. Üstte 3 çerçeveli açık niş, altta şifonyer tipi makyaj masası (alt iki rafın yerini kaplar)
+function framedFront(g, x, y, z, w, h, F) {                                          // çekmece önü: kumtaşı çerçeve + göbek
+  box(g, x, y, z, F, h, KT, mFrame);
+  box(g, x + w - F, y, z, F, h, KT, mFrame);
+  box(g, x + F, y, z, w - 2 * F, F, KT, mFrame);
+  box(g, x + F, y + h - F, z, w - 2 * F, F, KT, mFrame);
+  box(g, x + F, y + F, z + 3, w - 2 * F, h - 2 * F, 10, mGobek, true, false);
+  box(g, x + F + 25, y + F + 25, z + 3, w - 2 * F - 50, h - 2 * F - 50, 14, mGobek);
+}
 function makeupSection(w) {
   const [sx, iw] = inner(3);
-  const nh = (H - T - (NIS0 + T) - 2 * T) / 3;
-  [NIS0, NIS0 + T + nh, NIS0 + 2 * (T + nh)].forEach(y => box(w, sx, y, -DY, iw, T, DY, mInner));
-  const ny = k => NIS0 + T + k * (T + nh);
+  const x0 = MODX[3] + G / 2, fw = W - x0;                                           // ön yüz: kapak hizasından sağ yanın dışına
+  // şifonyer gövdesi: gardıroptan SIF_OUT öne taşar
+  const zf = SIF_OUT;                                                                // çekmece önlerinin arka yüzü
+  box(w, x0, 0, 0, T, SIF_TOP, zf, mBody);                                        // öne taşan kısmın yanları
+  box(w, W - T, 0, 0, T, SIF_TOP, zf, mBody);
+  box(w, x0 + T, 0, zf - 40, fw - 2 * T, B, T, mBody);                               // baza
+  box(w, x0, SIF_TOP, -DY, fw, STT, DY + zf + KT + 15, mFrame);                      // masa tablası
+  const hs = [SIF_TOP - B - 170 - 250 - 3 * G, 250, 170];                           // alttan üste: büyük, orta, ince makyaj çekmecesi
+  let y = B + G / 2;
+  hs.forEach((h, i) => {
+    const g = new THREE.Group(); w.add(g);
+    framedFront(g, x0 + G / 2, y, zf, fw - G, h, 50);
+    box(g, sx + R, y + 20, zf - 600, T, h - 60, 600, mInner);
+    box(g, sx + iw - T - R, y + 20, zf - 600, T, h - 60, 600, mInner);
+    box(g, sx + R + T, y + 20, zf - 600, iw - 2 * T - 2 * R, h - 60, T, mInner);
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(mm(6), mm(6), mm(128), 16), mMetal);
+    bar.rotation.z = Math.PI / 2; bar.position.set(mm(x0 + fw / 2), mm(y + h / 2), mm(zf + KT + 26)); bar.castShadow = true; g.add(bar);
+    [-48, 48].forEach(o => { const s = new THREE.Mesh(new THREE.CylinderGeometry(mm(4), mm(4), mm(26), 10), mMetal);
+      s.rotation.x = Math.PI / 2; s.position.set(mm(x0 + fw / 2 + o), mm(y + h / 2), mm(zf + KT + 13)); g.add(s); });
+    drawers.push({ g, max: mm(400), d: i, free: true });
+    y += h + G;
+  });
+  // nişler
+  const bot = SIF_TOP + STT, nh = (H - T - bot - 2 * T) / 3;
+  const shelfY = [bot + nh, bot + 2 * nh + T];
+  shelfY.forEach(y => box(w, sx, y, -DY, iw, T, DY, mInner));
+  const ny = k => bot + k * (nh + T);
+  // niş çerçevesi: iki dikme, üst kayıt, her rafın önünde ara kayıt, altta tabla üstünde kayıt
+  const F = 55;
+  box(w, x0, bot, 0, F, H - bot, KT, mFrame);
+  box(w, W - F, bot, 0, F, H - bot, KT, mFrame);
+  box(w, x0 + F, H - F, 0, fw - 2 * F, F, KT, mFrame);
+  box(w, x0 + F, bot, 0, fw - 2 * F, 40, KT, mFrame);
+  shelfY.forEach(y => box(w, x0 + F, y + T / 2 - F / 2, 0, fw - 2 * F, F, KT, mFrame));
   // niş süsleri
   [[0x8a6f5a, 230], [0x44546a, 260], [0xc9b9a4, 210], [0x7f8c86, 240]].forEach(([c, h], j) =>
-    box(w, sx + 40 + j * 34, ny(2), -DY + 120, 30, h, 200, M(c, { roughness: 0.9 })));
+    box(w, sx + 60 + j * 34, ny(2), -DY + 120, 30, h, 200, M(c, { roughness: 0.9 })));
   const vase = new THREE.Mesh(new THREE.CylinderGeometry(mm(55), mm(42), mm(200), 24), M(0xa8b5ad, { roughness: 0.4 }));
-  vase.position.set(mm(sx + iw - 110), mm(ny(1) + 100), mm(-DY / 2)); vase.castShadow = true; w.add(vase);
-  box(w, sx + 50, ny(1), -DY + 140, 160, 120, 160, M(0xd8cdb8, { roughness: 0.8 }));
-  box(w, sx + 60, ny(0), -DY + 120, 300, 90, 220, M(0xe4dccb, { roughness: 0.8 }));
+  vase.position.set(mm(sx + iw - 130), mm(ny(1) + 100), mm(-DY / 2)); vase.castShadow = true; w.add(vase);
+  box(w, sx + 60, ny(1), -DY + 140, 160, 120, 160, M(0xd8cdb8, { roughness: 0.8 }));
   const jar = new THREE.Mesh(new THREE.CylinderGeometry(mm(40), mm(40), mm(110), 20), M(0xf3ead8, { roughness: 0.3 }));
-  jar.position.set(mm(sx + 130), mm(ny(0) + 90 + 55), mm(-DY / 2)); jar.castShadow = true; w.add(jar);
-  // masa: üst tabla + ön alın + raylar; ileri çekilir
-  table = new THREE.Group(); w.add(table);
-  box(table, sx + 2, MAK_Y, -DY + 10, iw - 4, T, DY - 10, mInner);
-  box(table, sx + 2, MAK_Y - 70, -T, iw - 4, 70, T, mBody);
-  box(table, sx + 2, MAK_Y - 70, -DY + 10, T, 70, DY - 10 - T, mInner);
-  box(table, sx + iw - 2 - T, MAK_Y - 70, -DY + 10, T, 70, DY - 10 - T, mInner);
-  box(w, sx, MAK_Y - 50, -DY, R, 40, DY - 20, mRail, false);
-  box(w, sx + iw - R, MAK_Y - 50, -DY, R, 40, DY - 20, mRail, false);
+  jar.position.set(mm(sx + 130), mm(bot + 55), mm(-DY / 2 + 60)); jar.castShadow = true; w.add(jar);
+  box(w, sx + 200, bot, -DY / 2 + 40, 160, 60, 110, M(0xd8cdb8, { roughness: 0.6 }));
 }
 
 const ward = new THREE.Group();
@@ -1422,15 +1448,16 @@ function buildDims() {
   dim([0, y2, zf], [W, y2, zf], [0, 45, 0], '355');
   dim([-140, 0, zf], [-140, H, zf], [45, 0, 0], '256', [-360, H / 2, zf]);
   dim([W + 140, H, -D], [W + 140, H, KT], [0, 45, 0], '58 + 2', [W + 400, H + 120, (KT - D) / 2]);
-  dim([W + 140, 0, zf], [W + 140, MAK_Y + T, zf], [45, 0, 0], 'masa 76', [W + 400, (MAK_Y + T) / 2, zf]);
+  dim([W + 140, 0, SIF_OUT + KT], [W + 140, SIF_TOP + STT, SIF_OUT + KT], [45, 0, 0], 'masa 80', [W + 400, (SIF_TOP + STT) / 2, SIF_OUT + KT]);
+  dim([W + 140, SIF_TOP + STT + 60, KT], [W + 140, SIF_TOP + STT + 60, SIF_OUT + KT], [0, 45, 0], '+30', [W + 380, SIF_TOP + STT + 180, SIF_OUT / 2]);
 }
 (document.fonts ? document.fonts.load('600 50px Figtree').catch(() => {}) : Promise.resolve()).then(buildDims);
 
 // ---------------- Görünümler ----------------
 const views = {
   on:     { min: [-2.25, 0, -0.6], max: [2.4, 2.95, 0.05], dir: [0, 0.12, 1], fov: 40, pad: 1.0 },
-  aci:    { min: [-2.1, 0, -0.6], max: [2.3, 2.95, 0.6], dir: [0.75, 0.32, 1], fov: 40, pad: 0.98 },
-  makyaj: { min: [1.2, 0.3, -0.6], max: [1.8, 2.56, 0.5], dir: [-0.45, 0.12, 1], fov: 45, pad: 1.05 },
+  aci:    { min: [-2.1, 0, -0.6], max: [2.3, 2.95, 0.4], dir: [0.75, 0.32, 1], fov: 40, pad: 0.98 },
+  makyaj: { min: [1.25, 0, -0.6], max: [1.8, 2.56, 0.35], dir: [-0.45, 0.12, 1], fov: 45, pad: 1.05 },
   ust:    { min: [-2.1, 0, -0.6], max: [2.1, 2.6, 0.6], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
 };
 let anim = null, curView = 'on', userMoved = false;
@@ -1466,21 +1493,19 @@ function applyFov(f) {
 function goView(k, instant) {
   curView = k; userMoved = false;
   document.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === k));
-  if (k === 'makyaj' && !tblTarget && !instant) bTbl.onclick();
   const to = fit(k);
   if (instant) { camera.position.copy(to.pos); controls.target.copy(to.tgt); applyFov(to.fov); controls.update(); return; }
   anim = { from: { pos: camera.position.clone(), tgt: controls.target.clone(), fov: camera.fov }, to, t: 0 };
 }
 
 // ---------------- Etkileşim ----------------
-let doorT = 0, doorTarget = 0, wdrT = 0, drwTarget = 0, tblT = 0, tblTarget = 0;
+let doorT = 0, doorTarget = 0, wdrT = 0, drwT = 0, drwTarget = 0;
 const bDoor = document.getElementById('bDoor'), bDrw = document.getElementById('bDrw');
-const bTbl = document.getElementById('bTbl'), bDim = document.getElementById('bDim');
+const bDim = document.getElementById('bDim');
 bDoor.onclick = () => { doorTarget = doorTarget ? 0 : 1; bDoor.classList.toggle('on', !!doorTarget); bDoor.textContent = doorTarget ? 'Kapakları kapat' : 'Kapakları aç';
   if (!doorTarget && drwTarget) bDrw.onclick(); };
 bDrw.onclick = () => { drwTarget = drwTarget ? 0 : 1; bDrw.classList.toggle('on', !!drwTarget); bDrw.textContent = drwTarget ? 'Çekmeceleri kapat' : 'Çekmeceleri aç';
   if (drwTarget && !doorTarget) bDoor.onclick(); };
-bTbl.onclick = () => { tblTarget = tblTarget ? 0 : 1; bTbl.classList.toggle('on', !!tblTarget); bTbl.textContent = tblTarget ? 'Masayı kapat' : 'Masayı çek'; };
 bDim.onclick = () => { dims.visible = !dims.visible; bDim.classList.toggle('on', dims.visible); bDim.textContent = dims.visible ? 'Ölçüleri gizle' : 'Ölçüleri göster'; };
 document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => goView(b.dataset.v));
 document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => {
@@ -1534,10 +1559,9 @@ function loop(now) {
   // iç çekmeceler kapak arkasında: kapak açılmadan çıkmaz, kapak kapanırken önce içeri girer
   wdrT = step(wdrT, drwTarget && doorTarget && doorT > 0.85 ? 1 : 0, dt * 1.6);
   doorT = step(doorT, doorTarget === 0 && wdrT > 0 ? doorT : doorTarget, dt * 1.4);
-  tblT = step(tblT, tblTarget, dt * 1.5);
+  drwT = step(drwT, drwTarget, dt * 1.6);
   doors.forEach(d => { const e = ease(doorT); d.p.rotation.y = d.sign * e * THREE.MathUtils.degToRad(d.max); d.p.position.x = d.bx + d.dx * e; });
-  drawers.forEach(d => d.g.position.z = ease(Math.max(0, Math.min(1, wdrT * 1.3 - d.d * 0.06))) * d.max);
-  table.position.z = ease(tblT) * mm(420);
+  drawers.forEach(d => d.g.position.z = ease(Math.max(0, Math.min(1, (d.free ? drwT : wdrT) * 1.3 - d.d * 0.06))) * d.max);
   if (anim) {
     anim.t = Math.min(1, anim.t + dt * (anim.speed || 1.1)); const e = ease(anim.t);
     camera.position.lerpVectors(anim.from.pos, anim.to.pos, e);
