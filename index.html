@@ -1473,7 +1473,7 @@ mirror.rotation.y = -Math.PI / 2; mirror.position.set(RX - 0.021, 1.35, MZ); sce
 // oda kapısı: aynanın sağında (odaya doğru), sağ duvarda
 const rdoor = new THREE.Group(); scene.add(rdoor);
 (function roomDoor() {
-  const z0 = 1000, z1 = 1850, dh = 2100, cw = 70, xw = W / 2 + 2;                    // mm, dünya: x = mm(xw) duvar yüzü
+  const z0 = 820, z1 = 1670, dh = 2100, cw = 70;                                       // aynanın hemen sağında                    // mm, dünya: x = mm(xw) duvar yüzü
   const g = new THREE.Group(); g.position.x = mm(-W / 2); rdoor.add(g);              // gardırop koordinatlarıyla çiz
   const X = W + 2;
   box(g, X - 40, 0, z0, 40, dh, z1 - z0, mWhite, true, false);
@@ -1528,7 +1528,7 @@ function buildDims() {
 
 // ---------------- Görünümler ----------------
 const views = {
-  on:     { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 0.05], dir: [0, 0.12, 1], fov: 40, pad: 1.0 },
+  on:     { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 1.7], dir: [-0.18, 0.1, 1], fov: 40, pad: 0.95 },
   aci:    { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 0.75], dir: [-0.75, 0.32, 1], fov: 40, pad: 0.98 },
   makyaj: { min: [0.9, 0, -0.6], max: [1.78, 2.56, 1.4], dir: [-1.1, 0.25, 1], fov: 45, pad: 1.05 },
   ust:    { min: [-1.85, 0, -0.6], max: [1.85, 2.6, 1.0], dir: [0, 1, 0.0001], fov: 35, pad: 1.0 },
@@ -1538,7 +1538,7 @@ const panelEl = document.querySelector('.panel');
 function panelShift() {
   const r = panelEl.getBoundingClientRect();
   if (innerWidth < 600) return { x: 0, y: Math.max(0, innerHeight - r.top + 8) / 2 };
-  return { x: (r.right + 8) / 2, y: 0 };
+  return { x: 0, y: 0 };
 }
 function fit(k) {
   const v = views[k];
